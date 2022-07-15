@@ -5,17 +5,19 @@ import { Google } from "@mui/icons-material"
 import { Alert, Button, Grid, Link, TextField, Typography } from "@mui/material"
 import { AuthLayout } from '../layout/AuthLayout'
 import { useForm } from '../../hooks'
-import { startGoogleSignIn, startLoginWithEmailPassword } from '../../store/auth'
+import { startGoogleSignIn, startLoginWithEmailPassword } from '../../store/auth';
+
+const formData = {
+  email: '',
+  password: ''
+}
 
 export const LoginPage = () => {
 
   const { status, errorMessage } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
-  const { email, password, onInputChange, formState } = useForm({
-    email: '',
-    password: ''
-  });
+  const { email, password, onInputChange, formState } = useForm(formData);
 
   const isAuthenticating = useMemo(() => status === 'checking', [status]);
 
@@ -31,8 +33,8 @@ export const LoginPage = () => {
 
   return (
     <AuthLayout title='Login'>
-      <form 
-        onSubmit={onSubmit} 
+      <form
+        onSubmit={onSubmit}
         className='animate__animated animate__fadeIn animate__faster'>
         <Grid container>
           <Grid item xs={12} sx={{ mt: 2 }}>
