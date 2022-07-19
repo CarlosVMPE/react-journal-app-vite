@@ -3,7 +3,7 @@ import { loginWithEmailPassword, logoutFirebase,
 import { clearNotesLogout } from "../journal/journalSlice"
 import { checkingCredentials, logout, login } from "./"
 
-export const checkingAuthentication = (email, password) => {
+export const checkingAuthentication = () => {
     return async (dispach) => {
         dispach( checkingCredentials() )
     }
@@ -21,7 +21,7 @@ export const startGoogleSignIn = () => {
 
 export const startCreatingUserWithEmailPassword = ({ email, password, displayName}) => {
     return async(dispatch) => {
-        dispatch( checkingAuthentication() )
+        dispatch( checkingCredentials() )
 
         const { ok, uid, photoURL, errorMessage } = await registerUserWithEmailPassword( { email, password, displayName } );
         if( !ok ) return dispatch( logout({ errorMessage }) );
@@ -32,7 +32,7 @@ export const startCreatingUserWithEmailPassword = ({ email, password, displayNam
 
 export const startLoginWithEmailPassword = ({email, password}) => {
     return async( dispatch ) => {
-        dispatch( checkingAuthentication() );
+        dispatch( checkingCredentials() );
 
         const { ok, uid, displayName, photoURL, errorMessage } = await loginWithEmailPassword( { email, password } );
         if( !ok ) return dispatch( logout({ errorMessage }) );

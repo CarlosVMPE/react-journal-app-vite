@@ -9,7 +9,7 @@ import './styles.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename='/react-journal-app-vite'>
+      <BrowserRouter>
         <JounalApp />
       </BrowserRouter>
     </Provider>
