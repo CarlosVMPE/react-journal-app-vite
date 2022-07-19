@@ -8,6 +8,17 @@ jest.setTimeout(30000);
 jest.mock('../../firebase/providers');
 jest.mock('../../helpers/loadNotes');
 
+const deleteImage = async(uid) => {
+    // Borrar de Firebase
+    const collectionRef = collection(FirebaseDB, `${uid}/journal/notes`);
+    const docs = await getDocs(collectionRef);
+
+    const deletePromises = [];
+    docs.forEach(doc => deletePromises.push(deleteDoc(doc.ref)));
+
+    await Promise.all(deletePromises);
+}
+
 describe('Testing in Thunks - Journal', () => {
 
     const dispatch = jest.fn();
@@ -38,14 +49,7 @@ describe('Testing in Thunks - Journal', () => {
         }));
 
         // Borrar de Firebase
-        const collectionRef = collection(FirebaseDB, `${uid}/journal/notes`);
-        const docs = await getDocs(collectionRef);
-
-        const deletePromises = [];
-        docs.forEach(doc => deletePromises.push(deleteDoc(doc.ref)));
-
-        await Promise.all(deletePromises);
-
+        deleteImage(uid)
     });
 
     test('should be call loadNotes when is startLoadingNotes', async () => {
@@ -65,6 +69,9 @@ describe('Testing in Thunks - Journal', () => {
 
         await startLoadingNotes()(dispatch, getState);
         expect(dispatch).toHaveBeenCalledWith(setNotes(mockNotes))
+
+        // Borrar de Firebase
+        deleteImage(uid)
     });
 
     test('should be call loadNotes when is startLoadingNotes - Error', async () => {
@@ -74,6 +81,8 @@ describe('Testing in Thunks - Journal', () => {
         await startLoadingNotes()(dispatch, getState).catch((e) => {
             expect(e.message).toBe('El UID del usuario no existe')
         });
+
+        deleteImage(uid)
     });
 
     test('should be call setSaving in startSaveNote', async () => {
@@ -105,11 +114,15 @@ describe('Testing in Thunks - Journal', () => {
 
         await startSaveNote()(dispatch, getState);
         expect(dispatch).toHaveBeenCalledWith(setSaving());
+
+        // Borrar de Firebase
+        deleteImage(uid)
     });
 
     test('should call setSaving in startUploadingfiles', async () => {
         await startUploadingfiles()(dispatch);
         expect(dispatch).toHaveBeenCalledWith(setSaving());
+        
 
         await startUploadingfiles(['file1'])(dispatch);
         expect(dispatch).toHaveBeenCalledWith(setSaving());
@@ -145,5 +158,8 @@ describe('Testing in Thunks - Journal', () => {
 
         await startDeletingNote()(dispatch, getState);
         expect(dispatch).toHaveBeenCalledWith(deleteNoteById('0YOze872AOTFxtQUpPVO'));
+
+        // Borrar de Firebase
+        deleteImage(uid)
     });
 })
